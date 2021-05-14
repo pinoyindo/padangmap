@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    
+    <style type="text/css">
+        #map {
+            position: absolute;
+            top:0;
+            left:0;
+            right:0;
+            bottom:0;
+        }
+    </style>
+
+  </head>
+<!-- 
+  <header>
+    <br>
+    <h1>Health Services in Padang</h1>
+    <h2>Created by Lazuardi Rinaldi</h2>
+    <br>
+
+</header> -->
+
+  <body>
+    <div id="map"></div>
+    <script>
+
+        var map = L.map('map').setView([-0.9471, 100.4172], 12);
+
+        // add an OpenStreetMap tile layer
+        L.tileLayer('https://api.maptiler.com/maps/streets/{z}/{x}/{y}.png?key=n4f3Yn1Y1htK434J1x9q', {
+            attribution: '<a href="https://www.maptiler.com/copyright/" target="_blank">&copy; MapTiler</a> <a href="https://www.openstreetmap.org/copyright" target="_blank">&copy; OpenStreetMap contributors</a>'
+        }).addTo(map);
+
+        $.getJSON("apotik.json", function(data) {
+           // JSON result in `data` variable
+        var apotik = L.icon({
+          iconUrl: 'green.png',
+          iconSize:     [10, 10], // size of the icon
+           
+        });
+
+        for (i = 0; i < 60; i++) {
+
+            photo = ''
+
+            if ( data['photoreference'][i] != "NULL"){
+
+              photo = '<center><img src="' +
+              'https://maps.googleapis.com/maps/api/place/photo?photoreference=' + data['photoreference'][i] + '&sensor=false&maxheight=100&maxwidth=100&key=AIzaSyCDF7PX7qn9Xd6YAcJ6KNpwxfUS7yM9pow'
+              
+              +
+              '" height="100px" width="100px"/></center>'
+
+            } 
+
+
+
+            placename = data['Name'][i] + " " + data['address'][i]
+            var marker = L.marker([data['Latitude'][i], data['Longitude'][i]], {icon: apotik});    // Creating a Marke
+            marker.bindPopup(
+            // 'test {data['Name'][i]}'
+
+            photo +
+            
+            '<p><strong>' + data['Name'][i] + '</strong></p>' +
+            '<p><em>Apotik - Rating: </em>'  +   data['rating'][i]   +   '</p>' 
+            + '<p>' + data['address'][i] + '</p>'
+
+            + '<p><a href="https://google.com/maps/search/' + encodeURI(placename) + '">Get Directions</a></p>'
+            
+            ).openPopup();
+            marker.addTo(map); // Adding marker to the map
+            
+        }
+
+        });
+
+        $.getJSON("puskesmas.json", function(data) {
+           // JSON result in `data` variable
+
+        var puskesmas = L.icon({
+          iconUrl: 'blue.png',
+          iconSize:     [10, 10], // size of the icon
+
+        });
+
+        for (i = 0; i < 60; i++) {
+          photo = ''
+
+          if ( data['photoreference'][i] != "NULL"){
+
+            photo = '<center><img src="' +
+            'https://maps.googleapis.com/maps/api/place/photo?photoreference=' + data['photoreference'][i] + '&sensor=false&maxheight=100&maxwidth=100&key=AIzaSyCDF7PX7qn9Xd6YAcJ6KNpwxfUS7yM9pow'
+            
+            +
+            '" height="100px" width="100px"/></center>'
+
+          } 
+
+
+
+
+            placename = data['Name'][i] + " " + data['address'][i]
+            var marker = L.marker([data['Latitude'][i], data['Longitude'][i]], {icon: puskesmas});    // Creating a Marke
+            marker.bindPopup(
+          
+            photo +
+              '<p><strong>' + data['Name'][i] + '</strong></p>' +
+            '<p><em>Puskesmas - Rating: </em>'  +   data['rating'][i]   +   '</p>' 
+            + '<p>' + data['address'][i] + '</p>'
+            
+            + '<p><a href="https://google.com/maps/search/' + encodeURI(placename) + '">Get Directions</a></p>'
+            
+
+
+            ).openPopup();
+            marker.addTo(map); // Adding marker to the map
+            
+        }
+
+
+
+        });
+
+        $.getJSON( "rumahsakit.json", function( data ) {
+        // // console.log(data); //json output 
+        
+
+        var rumahsakit = L.icon({
+            iconUrl: 'red.png',
+            iconSize:     [10, 10], // size of the icon
+
+            
+        });
+
+    
+        for (i = 0; i < 60; i++) {
+          photo = ''
+
+            if ( data['photoreference'][i] != "NULL"){
+
+              photo = '<center><img src="' +
+              'https://maps.googleapis.com/maps/api/place/photo?photoreference=' + data['photoreference'][i] + '&sensor=false&maxheight=100&maxwidth=100&key=AIzaSyCDF7PX7qn9Xd6YAcJ6KNpwxfUS7yM9pow'
+              
+              +
+              '" height="100px" width="100px"/></center>'
+
+            } 
+
+
+
+
+          placename = data['Name'][i]+ " " +  data['address'][i]
+
+
+            var marker = L.marker([data['Latitude'][i], data['Longitude'][i]], {icon: rumahsakit});    // Creating a Marke
+            marker.bindPopup(
+              photo +
+              '<p><strong>' + data['Name'][i] + '</strong></p>' +
+            '<p><em>Rumah Sakit - Rating: </em>'  +   data['rating'][i]   +   '</p>' 
+            + '<p>' + data['address'][i] + '</p>'
+
+            + '<p><a href="https://google.com/maps/search/' + encodeURI(placename) + '">Get Directions</a></p>'
+            
+
+
+
+            ).openPopup();
+            marker.addTo(map); // Adding marker to the map
+            
+        }
+
+        });
+
+
+
+        var masjid = L.icon({
+            iconUrl: 'lafinzaicon.png',
+            iconSize:     [10, 10], // size of the icon
+        });
+
+        var marker1 = L.marker([-0.8938361762551508, 100.34496419662706], {icon: masjid});    // Creating a Marke
+            marker1.bindPopup(
+
+            '<p><strong>Masjid Lafinza</strong></p> <p>West Air Tawar, Padang Utara, Padang City, West Sumatra, Indonesia</p>'
+            + '<p><a href="https://google.com/maps/search/' + encodeURI("Masjid Lafinza") + '">Get Directions</a></p>'
+  
+
+
+
+            ).openPopup();
+            marker1.addTo(map); // 
+
+
+
+        
+      
+
+
+
+    </script>
+  </body>
+</html>
